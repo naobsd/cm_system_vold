@@ -89,7 +89,11 @@ int main() {
     {
         FILE *fp;
         char state[255];
+#ifndef USE_LEGACY_USB_MASS_STORAGE_SWITCH
         if ((fp = fopen("/sys/devices/virtual/switch/usb_mass_storage/state",
+#else
+        if ((fp = fopen("/sys/class/switch/usb_mass_storage/state",
+#endif
                          "r"))) {
             if (fgets(state, sizeof(state), fp)) {
                 if (!strncmp(state, "online", 6)) {
