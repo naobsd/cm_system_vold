@@ -62,9 +62,6 @@ int Ntfs::doMount(const char *fsPath, const char *mountPoint,
     flags |= (ro ? MS_RDONLY : 0);
     flags |= (remount ? MS_REMOUNT : 0);
 
-    // Testing/security, mount ro up to now
-    flags |= MS_RDONLY;
-    
     /*
      * Note: This is a temporary hack. If the sampling profiler is enabled,
      * we make the SD card world-writable so any process can write snapshots.
@@ -83,12 +80,12 @@ int Ntfs::doMount(const char *fsPath, const char *mountPoint,
             "uid=%d,gid=%d,fmask=%o,dmask=%o",
             ownerUid, ownerGid, permMask, permMask);
 
-    rc = mount(fsPath, mountPoint, "ntfs", flags, mountData);
+    rc = mount(fsPath, mountPoint, "ufsd", flags, mountData);
 
     if (rc && errno == EROFS) {
         SLOGE("%s appears to be a read only filesystem - retrying mount RO", fsPath);
         flags |= MS_RDONLY;
-        rc = mount(fsPath, mountPoint, "ntfs", flags, mountData);
+        rc = mount(fsPath, mountPoint, "ufsd", flags, mountData);
     }
 
     return rc;
